@@ -13,6 +13,8 @@
 		72B843D216E4FA6700507CDE /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 72B843D016E4FA6700507CDE /* Credits.rtf */; };
 		72B843D516E4FA6700507CDE /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 72B843D416E4FA6700507CDE /* AppDelegate.m */; };
 		72B843D816E4FA6700507CDE /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 72B843D616E4FA6700507CDE /* MainMenu.xib */; };
+		72B843E316E4FB2200507CDE /* KFToolbar.m in Sources */ = {isa = PBXBuildFile; fileRef = 72B843E016E4FB2200507CDE /* KFToolbar.m */; };
+		72B843E416E4FB2200507CDE /* KFToolbarItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 72B843E216E4FB2200507CDE /* KFToolbarItem.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -29,6 +31,10 @@
 		72B843D316E4FA6700507CDE /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		72B843D416E4FA6700507CDE /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		72B843D716E4FA6700507CDE /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		72B843DF16E4FB2200507CDE /* KFToolbar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KFToolbar.h; sourceTree = "<group>"; };
+		72B843E016E4FB2200507CDE /* KFToolbar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KFToolbar.m; sourceTree = "<group>"; };
+		72B843E116E4FB2200507CDE /* KFToolbarItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KFToolbarItem.h; sourceTree = "<group>"; };
+		72B843E216E4FB2200507CDE /* KFToolbarItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KFToolbarItem.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -85,6 +91,7 @@
 				72B843D316E4FA6700507CDE /* AppDelegate.h */,
 				72B843D416E4FA6700507CDE /* AppDelegate.m */,
 				72B843D616E4FA6700507CDE /* MainMenu.xib */,
+				72B843DE16E4FB2200507CDE /* Sources */,
 				72B843C816E4FA6700507CDE /* Supporting Files */,
 			);
 			path = KFToolbar;
@@ -100,6 +107,17 @@
 				72B843D016E4FA6700507CDE /* Credits.rtf */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		72B843DE16E4FB2200507CDE /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				72B843DF16E4FB2200507CDE /* KFToolbar.h */,
+				72B843E016E4FB2200507CDE /* KFToolbar.m */,
+				72B843E116E4FB2200507CDE /* KFToolbarItem.h */,
+				72B843E216E4FB2200507CDE /* KFToolbarItem.m */,
+			);
+			path = Sources;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -168,6 +186,8 @@
 			files = (
 				72B843CE16E4FA6700507CDE /* main.m in Sources */,
 				72B843D516E4FA6700507CDE /* AppDelegate.m in Sources */,
+				72B843E316E4FB2200507CDE /* KFToolbar.m in Sources */,
+				72B843E416E4FB2200507CDE /* KFToolbarItem.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
