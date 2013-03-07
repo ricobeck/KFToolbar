@@ -8,7 +8,7 @@
 #
 Pod::Spec.new do |s|
   s.name         = "KFToolbar"
-  s.version      = "0.0.1"
+  s.version      = "0.0.2"
   s.summary      = "KFToolbar is a UIView subview that handles KFToolbarItems..."
   # s.description  = <<-DESC
   #                   An optional longer description of KFDropView
@@ -49,7 +49,7 @@ Pod::Spec.new do |s|
 
   # Specify the location from where the source should be retrieved.
   #
-  s.source       = { :git => "https://kfi.codebasehq.com/kftoolbar/kftoolbar.git", :tag => "0.0.1" }
+  s.source       = { :git => "https://kfi.codebasehq.com/kftoolbar/kftoolbar.git", :tag => "0.0.2" }
   # s.source       = { :svn => 'http://EXAMPLE/KFDropView/tags/1.0.0' }
   # s.source       = { :hg  => 'http://EXAMPLE/KFDropView', :revision => '1.0.0' }
 
