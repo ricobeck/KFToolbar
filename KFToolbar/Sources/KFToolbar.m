@@ -17,6 +17,7 @@
 
 
 @property (nonatomic, copy) KFToolbarEventsHandler selectionHandler;
+@property (nonatomic) BOOL itemsAreHidden;
 
 
 @end
@@ -30,7 +31,7 @@
 {
     if (self = [super initWithFrame:frameRect])
     {
-        [self setDefaultColors];
+        [self setupDefaults];
     }
     
     return self;
@@ -41,18 +42,71 @@
 {
     if (self = [super initWithCoder:aDecoder])
     {
-        [self setDefaultColors];
+        [self setupDefaults];
     }
     return self;
 }
 
 
-- (void)setDefaultColors
+- (void)setupDefaults
 {
     self.gradientColorTop = kKFToolbarGradientColorTop;
     self.gradientColorBottom = kKFToolbarGradientColorBottom;
     self.borderColorTop = kKFToolbarBorderColorTop;
     self.borderColorBottom = kKFToolbarBorderColorBottom;
+    
+    [self addObserver:self forKeyPath:@"frame" options:NSKeyValueObservingOptionNew context:NULL];
+}
+
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+    if ([keyPath isEqualToString:@"frame"] && self.leftItems.count > 0 && self.rightItems.count > 0)
+    {
+        KFToolbarItem *lastLeftItem = self.leftItems.lastObject;
+        KFToolbarItem *firstRightItem = self.rightItems[0];
+        if (CGRectIntersectsRect(lastLeftItem.tabBarItemButton.frame, firstRightItem.tabBarItemButton.frame))
+        {
+            if (!self.itemsAreHidden)
+            {
+                [[self allItems] enumerateObjectsUsingBlock:^(KFToolbarItem *item, NSUInteger idx, BOOL *stop)
+                {
+                    [NSAnimationContext beginGrouping];
+                    [[NSAnimationContext currentContext] setCompletionHandler:^{
+                        item.tabBarItemButton.hidden = YES;
+                    }];
+                    [[NSAnimationContext currentContext] setDuration:.05f];
+                    [[item.tabBarItemButton animator] setAlphaValue:.0f];
+                    [NSAnimationContext endGrouping];
+                }];
+                self.itemsAreHidden = YES;
+            }
+        }
+        else if (self.itemsAreHidden)
+        {
+            [[self allItems] enumerateObjectsUsingBlock:^(KFToolbarItem *item, NSUInteger idx, BOOL *stop)
+             {
+                 item.tabBarItemButton.hidden = NO;
+                 [[item.tabBarItemButton animator] setAlphaValue:1.0f];
+             }];
+            self.itemsAreHidden = NO;
+        }
+    }
+}
+
+
+- (NSArray *)allItems
+{
+    NSMutableArray *items = [self.leftItems mutableCopy];
+    [items addObjectsFromArray:self.rightItems];
+    return [items copy];
+}
+
+
+
+- (BOOL)postsBoundsChangedNotifications
+{
+    return YES;
 }
 
 
