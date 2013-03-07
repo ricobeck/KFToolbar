@@ -13,7 +13,7 @@
 #define kKFToolbarGradientColorBottom [NSColor colorWithCalibratedRed:0.700f green:0.700f blue:0.700f alpha:1.0f]
 
 #define kKFToolbarBorderColorTop [NSColor colorWithDeviceWhite:0.6 alpha:1.0f]
-#define kKFToolbarBorderColorBottom [NSColor colorWithDeviceWhite:0.2 alpha:1.0f]
+#define kKFToolbarBorderColorBottom [NSColor colorWithDeviceWhite:0.8 alpha:1.0f]
 
 
 typedef NS_ENUM(NSUInteger, KFToolbarItemSelectionType)

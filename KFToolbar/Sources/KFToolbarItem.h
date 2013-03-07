@@ -15,6 +15,14 @@
 @property (nonatomic, readonly) NSButton* tabBarItemButton;
 
 
+@property (nonatomic, strong) NSImage *icon;
+@property (nonatomic, strong) NSString *toolTip;
+@property (nonatomic, strong) NSString *keyEquivalent;
+@property (nonatomic) NSUInteger keyEquivalentModifierMask;
+@property (nonatomic) NSInteger state;
+@property (nonatomic) NSInteger tag;
+
+
 + (instancetype)toolbarItemWithType:(NSButtonType)type icon:(NSImage *)iconImage tag:(NSUInteger)itemTag;
 
 + (instancetype)toolbarItemWithIcon:(NSImage *)iconImage tag:(NSUInteger)itemTag;
