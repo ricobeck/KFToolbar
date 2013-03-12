@@ -31,7 +31,7 @@ colorSpace: [NSColorSpace genericGrayColorSpace]]
 @interface KFToolbarItem ()
 
 
-@property (nonatomic, strong) NSButton* tabBarItemButton;
+@property (nonatomic, strong) NSButton* button;
 
 
 @end
@@ -63,18 +63,18 @@ colorSpace: [NSColorSpace genericGrayColorSpace]]
     self = [super init];
     if (self)
     {
-        self.tabBarItemButton = [[NSButton alloc] initWithFrame:NSZeroRect];
+        self.button = [[NSButton alloc] initWithFrame:NSZeroRect];
         
         KFToolbarItemButtonCell *cell = [[KFToolbarItemButtonCell alloc] init];
         cell.buttonType = type;
         cell.state = NSOffState;
-        self.tabBarItemButton.cell = cell;
+        self.button.cell = cell;
         
-        [self.tabBarItemButton setButtonType:type];
-        [self.tabBarItemButton setEnabled:YES];
-        self.tabBarItemButton.image = iconImage;
-        self.tabBarItemButton.tag = itemTag;
-        [self.tabBarItemButton sendActionOn:NSLeftMouseDownMask];
+        [self.button setButtonType:type];
+        [self.button setEnabled:YES];
+        self.button.image = iconImage;
+        self.button.tag = itemTag;
+        [self.button sendActionOn:NSLeftMouseDownMask];
     }
     return self;
 }
@@ -82,7 +82,7 @@ colorSpace: [NSColorSpace genericGrayColorSpace]]
 
 - (void)removeFromSuperview
 {
-    [self.tabBarItemButton removeFromSuperview];
+    [self.button removeFromSuperview];
 }
 
 
@@ -90,78 +90,78 @@ colorSpace: [NSColorSpace genericGrayColorSpace]]
 
 - (void)setIcon:(NSImage *)newIcon
 {
-    self.tabBarItemButton.image = newIcon;
+    self.button.image = newIcon;
 }
 
 
 - (NSImage *)icon
 {
-    return self.tabBarItemButton.image;
+    return self.button.image;
 }
 
 
 - (void)setTag:(NSInteger)newTag
 {
-    self.tabBarItemButton.tag = newTag;
+    self.button.tag = newTag;
 }
 
 
 - (NSInteger)tag
 {
-    return self.tabBarItemButton.tag;
+    return self.button.tag;
 }
 
 
 - (void)setToolTip:(NSString *)newToolTip
 {
-    self.tabBarItemButton.toolTip = newToolTip;
+    self.button.toolTip = newToolTip;
 }
 
 
 - (NSString *)toolTip
 {
-    return self.tabBarItemButton.toolTip;
+    return self.button.toolTip;
 }
 
 
 - (void)setKeyEquivalentModifierMask:(NSUInteger)newKeyEquivalentModifierMask
 {
-    self.tabBarItemButton.keyEquivalentModifierMask = newKeyEquivalentModifierMask;
+    self.button.keyEquivalentModifierMask = newKeyEquivalentModifierMask;
 }
 
 
 - (NSUInteger)keyEquivalentModifierMask
 {
-    return self.tabBarItemButton.keyEquivalentModifierMask;
+    return self.button.keyEquivalentModifierMask;
 }
 
 
 - (void)setKeyEquivalent:(NSString *)newKeyEquivalent
 {
-    self.tabBarItemButton.keyEquivalent = newKeyEquivalent;
+    self.button.keyEquivalent = newKeyEquivalent;
 }
 
 - (NSString *)keyEquivalent
 {
-    return self.tabBarItemButton.keyEquivalent;
+    return self.button.keyEquivalent;
 }
 
 
 - (void)setState:(NSInteger)value
 {
-    self.tabBarItemButton.state = value;
+    self.button.state = value;
 }
 
 
 - (NSInteger)state
 {
-    return self.tabBarItemButton.state;
+    return self.button.state;
 }
 
 
 - (void)setButtonType:(NSButtonType)aType
 {
-    [self.tabBarItemButton setButtonType:aType];
+    [self.button setButtonType:aType];
 }
 
 

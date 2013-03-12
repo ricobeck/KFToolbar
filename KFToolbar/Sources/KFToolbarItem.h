@@ -12,7 +12,7 @@
 @interface KFToolbarItem : NSButtonCell
 
 
-@property (nonatomic, readonly) NSButton* tabBarItemButton;
+@property (nonatomic, readonly) NSButton* button;
 
 
 @property (nonatomic, strong) NSImage *icon;

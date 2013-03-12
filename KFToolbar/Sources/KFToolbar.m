@@ -18,6 +18,7 @@
 
 @property (nonatomic, copy) KFToolbarEventsHandler selectionHandler;
 @property (nonatomic) BOOL itemsAreHidden;
+@property (nonatomic) NSUInteger hideWidth;
 
 
 @end
@@ -65,7 +66,7 @@
     {
         KFToolbarItem *lastLeftItem = self.leftItems.lastObject;
         KFToolbarItem *firstRightItem = self.rightItems[0];
-        if (CGRectIntersectsRect(lastLeftItem.tabBarItemButton.frame, firstRightItem.tabBarItemButton.frame))
+        if (CGRectIntersectsRect(lastLeftItem.button.frame, firstRightItem.button.frame))
         {
             if (!self.itemsAreHidden)
             {
@@ -73,21 +74,22 @@
                 {
                     [NSAnimationContext beginGrouping];
                     [[NSAnimationContext currentContext] setCompletionHandler:^{
-                        item.tabBarItemButton.hidden = YES;
+                        item.button.hidden = YES;
                     }];
                     [[NSAnimationContext currentContext] setDuration:.05f];
-                    [[item.tabBarItemButton animator] setAlphaValue:.0f];
+                    [[item.button animator] setAlphaValue:.0f];
                     [NSAnimationContext endGrouping];
                 }];
                 self.itemsAreHidden = YES;
+                self.hideWidth = NSWidth(self.frame);
             }
         }
-        else if (self.itemsAreHidden)
+        else if (self.itemsAreHidden && self.hideWidth < NSWidth(self.frame))
         {
             [[self allItems] enumerateObjectsUsingBlock:^(KFToolbarItem *item, NSUInteger idx, BOOL *stop)
              {
-                 item.tabBarItemButton.hidden = NO;
-                 [[item.tabBarItemButton animator] setAlphaValue:1.0f];
+                 item.button.hidden = NO;
+                 [[item.button animator] setAlphaValue:1.0f];
              }];
             self.itemsAreHidden = NO;
         }
@@ -146,7 +148,7 @@
         
         [self.leftItems enumerateObjectsUsingBlock:^(KFToolbarItem *item, NSUInteger idx, BOOL *stop)
          {
-             NSButton *itemButton = item.tabBarItemButton;
+             NSButton *itemButton = item.button;
              itemButton.frame = NSMakeRect(0.0f, 0.0f, kKFToolbarItemWidth, NSHeight(self.bounds));
              itemButton.action = @selector(selectToolbarItem:);
              itemButton.target = self;
@@ -167,7 +169,7 @@
         
         [self.rightItems enumerateObjectsUsingBlock:^(KFToolbarItem *item, NSUInteger idx, BOOL *stop)
          {
-             NSButton *itemButton = item.tabBarItemButton;
+             NSButton *itemButton = item.button;
              itemButton.frame = NSMakeRect(0.0f, 0.0f, kKFToolbarItemWidth, NSHeight(self.bounds));
              itemButton.action = @selector(selectToolbarItem:);
              itemButton.target = self;
@@ -195,7 +197,7 @@
     
     [self.leftItems enumerateObjectsUsingBlock:^(KFToolbarItem *item, NSUInteger idx, BOOL *stop)
     {
-        item.tabBarItemButton.frame = NSMakeRect(offset_x, NSMinY(self.bounds), kKFToolbarItemWidth, NSHeight(self.bounds));
+        item.button.frame = NSMakeRect(offset_x, NSMinY(self.bounds), kKFToolbarItemWidth, NSHeight(self.bounds));
         offset_x += kKFToolbarItemWidth;
     }];
     
@@ -204,7 +206,7 @@
     
     [self.rightItems enumerateObjectsUsingBlock:^(KFToolbarItem *item, NSUInteger idx, BOOL *stop)
      {
-         item.tabBarItemButton.frame = NSMakeRect(NSMaxX(self.bounds) - totalWidth + offset_x, NSMinY(self.bounds), kKFToolbarItemWidth, NSHeight(self.bounds));
+         item.button.frame = NSMakeRect(NSMaxX(self.bounds) - totalWidth + offset_x, NSMinY(self.bounds), kKFToolbarItemWidth, NSHeight(self.bounds));
          offset_x += kKFToolbarItemWidth;
      }];
 }
