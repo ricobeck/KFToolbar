@@ -138,8 +138,11 @@
 
 - (void)setEnabled:(BOOL)enabled
 {
-    _enabled = enabled;
-    [self setItemsEnabled:_enabled];
+    if (_enabled != enabled)
+    {
+        _enabled = enabled;
+        [self setItemsEnabled:_enabled];
+    }
 }
 
 

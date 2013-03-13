@@ -40,7 +40,16 @@
                 break;
 
             case 2:
+            {
+                [self setControlsEnabled:NO forView:self.toolbar.superview];
+                double delayInSeconds = 2.0;
+                dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
+                dispatch_after(popTime, dispatch_get_main_queue(), ^(void)
+                {
+                    [self setControlsEnabled:YES forView:self.toolbar.superview];
+                });
                 break;
+            }
                 
             case 3:
             {
@@ -48,9 +57,9 @@
                 double delayInSeconds = 2.0;
                 dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
                 dispatch_after(popTime, dispatch_get_main_queue(), ^(void)
-                               {
-                                   self.toolbar.enabled = YES;
-                               });
+                {
+                    self.toolbar.enabled = YES;
+                });
                 break;
             }
 
@@ -58,7 +67,46 @@
                 break;
         }
     }];
+}
 
+
+- (void)setControlsEnabled:(BOOL)enabled forView:(NSView *)view
+{
+    static NSMutableArray *previouslyDisabledControls;
+    if (!previouslyDisabledControls || !enabled)
+    {
+        previouslyDisabledControls = [NSMutableArray new];
+    }
+
+    for (NSView *subview in view.subviews)
+    {
+        if ([subview respondsToSelector:@selector(setEnabled:)])
+        {
+            if (enabled)
+            {
+                if (![previouslyDisabledControls containsObject:subview])
+                {
+                    NSInvocation *inv = [NSInvocation invocationWithMethodSignature:[subview methodSignatureForSelector:@selector(setEnabled:)]];
+                    [inv setSelector:@selector(setEnabled:)];
+                    [inv setTarget:subview];
+                    [inv setArgument:&enabled atIndex:2];
+                    [inv performSelector:@selector(invoke) withObject:nil];
+                }
+            }
+            else
+            {
+                if (![subview valueForKey:@"isEnabled"])
+                {
+                    [previouslyDisabledControls addObject:subview];
+                }
+                NSInvocation *inv = [NSInvocation invocationWithMethodSignature:[subview methodSignatureForSelector:@selector(setEnabled:)]];
+                [inv setSelector:@selector(setEnabled:)];
+                [inv setTarget:subview];
+                [inv setArgument:&enabled atIndex:2];
+                [inv performSelector:@selector(invoke) withObject:nil];
+            }
+        }
+    }
 }
 
 @end
