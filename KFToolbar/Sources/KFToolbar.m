@@ -136,6 +136,50 @@
 }
 
 
+- (void)setEnabled:(BOOL)enabled
+{
+    _enabled = enabled;
+
+    [[self allItems] enumerateObjectsUsingBlock:^(KFToolbarItem *item, NSUInteger idx, BOOL *stop)
+    {
+        item.enabled = _enabled;
+    }];
+}
+
+
+//- (void)enableControls:(BOOL)enable
+//{
+//    static NSMutableArray *previouslyDisabledControls;
+//    if (!previouslyDisabledControls || !enable)
+//    {
+//        previouslyDisabledControls = [NSMutableArray new];
+//    }
+//
+//    for (NSView *view in self.subviews)
+//    {
+//        if ([view respondsToSelector:@selector(setEnabled:)])
+//        {
+//            NSControl *control = (NSControl *)view;
+//            if (enable)
+//            {
+//                if (![previouslyDisabledControls containsObject:control])
+//                {
+//                    [control setEnabled:YES];
+//                }
+//            }
+//            else
+//            {
+//                if (!control.isEnabled)
+//                {
+//                    [previouslyDisabledControls addObject:control];
+//                }
+//                [control setEnabled:NO];
+//            }
+//        }
+//    }
+//}
+
+
 #pragma mark - Adding Items
 
 
@@ -147,14 +191,18 @@
         _leftItems = leftItems;
         
         [self.leftItems enumerateObjectsUsingBlock:^(KFToolbarItem *item, NSUInteger idx, BOOL *stop)
-         {
-             NSButton *itemButton = item.button;
-             itemButton.frame = NSMakeRect(0.0f, 0.0f, kKFToolbarItemWidth, NSHeight(self.bounds));
-             itemButton.action = @selector(selectToolbarItem:);
-             itemButton.target = self;
-             [self addSubview:itemButton];
-         }];
-        
+        {
+            if (idx == 0)
+            {
+                [item performSelector:@selector(hideLeftShadow)];
+            }
+            NSButton *itemButton = item.button;
+            itemButton.frame = NSMakeRect(0.0f, 0.0f, kKFToolbarItemWidth, NSHeight(self.bounds));
+            itemButton.action = @selector(selectToolbarItem:);
+            itemButton.target = self;
+            [self addSubview:itemButton];
+        }];
+
         [self layoutSubviews];
     }
 }
@@ -168,13 +216,17 @@
         _rightItems = rightItems;
         
         [self.rightItems enumerateObjectsUsingBlock:^(KFToolbarItem *item, NSUInteger idx, BOOL *stop)
-         {
-             NSButton *itemButton = item.button;
-             itemButton.frame = NSMakeRect(0.0f, 0.0f, kKFToolbarItemWidth, NSHeight(self.bounds));
-             itemButton.action = @selector(selectToolbarItem:);
-             itemButton.target = self;
-             [self addSubview:itemButton];
-         }];
+        {
+            if (idx == _rightItems.count - 1)
+            {
+                [item performSelector:@selector(hideRightShadow)];
+            }
+            NSButton *itemButton = item.button;
+            itemButton.frame = NSMakeRect(0.0f, 0.0f, kKFToolbarItemWidth, NSHeight(self.bounds));
+            itemButton.action = @selector(selectToolbarItem:);
+            itemButton.target = self;
+            [self addSubview:itemButton];
+        }];
         
         [self layoutSubviews];
     }
@@ -229,7 +281,8 @@
     [allItems addObjectsFromArray:self.rightItems];
     
     __block KFToolbarItem *foundItem;
-    [allItems enumerateObjectsUsingBlock:^(KFToolbarItem *item, NSUInteger idx, BOOL *stop) {
+    [allItems enumerateObjectsUsingBlock:^(KFToolbarItem *item, NSUInteger idx, BOOL *stop)
+    {
         if (item.tag == button.tag)
         {
             foundItem = item;
@@ -251,7 +304,8 @@
 
 - (void)clearLeftItems
 {
-    [self.leftItems enumerateObjectsUsingBlock:^(KFToolbarItem *item, NSUInteger idx, BOOL *stop) {
+    [self.leftItems enumerateObjectsUsingBlock:^(KFToolbarItem *item, NSUInteger idx, BOOL *stop)
+    {
         [item removeFromSuperview];
     }];
     _leftItems = nil;
@@ -260,7 +314,8 @@
 
 - (void)clearRightItems
 {
-    [self.rightItems enumerateObjectsUsingBlock:^(KFToolbarItem *item, NSUInteger idx, BOOL *stop) {
+    [self.rightItems enumerateObjectsUsingBlock:^(KFToolbarItem *item, NSUInteger idx, BOOL *stop)
+    {
         [item removeFromSuperview];
     }];
     _rightItems = nil;

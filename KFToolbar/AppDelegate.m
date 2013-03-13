@@ -34,20 +34,31 @@
         {
             case 0:
                 break;
-
+            
             case 1:
+                addItem.enabled = !addItem.isEnabled;
                 break;
 
             case 2:
                 break;
-
-            case 3:
-                break;
                 
+            case 3:
+            {
+                self.toolbar.enabled = NO;
+                double delayInSeconds = 2.0;
+                dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
+                dispatch_after(popTime, dispatch_get_main_queue(), ^(void)
+                               {
+                                   self.toolbar.enabled = YES;
+                               });
+                break;
+            }
+
             default:
                 break;
         }
     }];
+
 }
 
 @end

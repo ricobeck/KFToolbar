@@ -24,15 +24,15 @@ colorSpace: [NSColorSpace genericGrayColorSpace]]
 @interface KFToolbarItemButtonCell : NSButtonCell
 
 @property (nonatomic) NSButtonType buttonType;
+@property (nonatomic, assign) BOOL showLeftShadow;
+@property (nonatomic, assign) BOOL showRightShadow;
 
 @end
 
 
 @interface KFToolbarItem ()
 
-
 @property (nonatomic, strong) NSButton* button;
-
 
 @end
 
@@ -64,17 +64,19 @@ colorSpace: [NSColorSpace genericGrayColorSpace]]
     if (self)
     {
         self.button = [[NSButton alloc] initWithFrame:NSZeroRect];
-        
+
         KFToolbarItemButtonCell *cell = [[KFToolbarItemButtonCell alloc] init];
+        cell.showLeftShadow = YES;
+        cell.showRightShadow = YES;
         cell.buttonType = type;
         cell.state = NSOffState;
         self.button.cell = cell;
-        
+
         [self.button setButtonType:type];
-        [self.button setEnabled:YES];
         self.button.image = iconImage;
         self.button.tag = itemTag;
         [self.button sendActionOn:NSLeftMouseDownMask];
+        self.enabled = YES;
     }
     return self;
 }
@@ -86,7 +88,31 @@ colorSpace: [NSColorSpace genericGrayColorSpace]]
 }
 
 
+- (void)hideLeftShadow
+{
+    ((KFToolbarItemButtonCell *)self.button.cell).showLeftShadow = NO;
+}
+
+
+- (void)hideRightShadow
+{
+    ((KFToolbarItemButtonCell *)self.button.cell).showRightShadow = NO;
+}
+
+
 #pragma mark - Properties
+
+- (BOOL)isEnabled
+{
+    return self.button.isEnabled;
+}
+
+
+- (void)setEnabled:(BOOL)enabled
+{
+    [self.button setEnabled:enabled];
+}
+
 
 - (void)setIcon:(NSImage *)newIcon
 {
@@ -227,8 +253,11 @@ colorSpace: [NSColorSpace genericGrayColorSpace]]
         shadow.shadowOffset = NSMakeSize(1.0f, 0.0f);
         shadow.shadowBlurRadius = 2.0f;
         shadow.shadowColor = [NSColor darkGrayColor];
-        [shadow set];
-        
+        if (self.showLeftShadow)
+        {
+            [shadow set];
+        }
+
         [[NSColor blackColor] set];
         CGFloat radius = 50.0;
         NSPoint center = NSMakePoint(NSMinX(frame) - radius, NSMidY(frame));
@@ -237,11 +266,14 @@ colorSpace: [NSColorSpace genericGrayColorSpace]]
         [path appendBezierPathWithArcWithCenter:center radius:radius startAngle:-90.0f endAngle:90.0f];
         [path closePath];
         [path fill];
-        
+
         // shadow of the right border
-        shadow.shadowOffset = NSMakeSize(-1.0f, 0.0f);
-        [shadow set];
-        
+        if (self.showRightShadow)
+        {
+            shadow.shadowOffset = NSMakeSize(-1.0f, 0.0f);
+            [shadow set];
+        }
+
         center = NSMakePoint(NSMaxX(frame) + radius, NSMidY(frame));
         path = [NSBezierPath bezierPath];
         [path moveToPoint:center];

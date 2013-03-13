@@ -21,6 +21,7 @@
 @property (nonatomic) NSUInteger keyEquivalentModifierMask;
 @property (nonatomic) NSInteger state;
 @property (nonatomic) NSInteger tag;
+@property (nonatomic, getter = isEnabled) BOOL enabled;
 
 
 + (instancetype)toolbarItemWithType:(NSButtonType)type icon:(NSImage *)iconImage tag:(NSUInteger)itemTag;

@@ -37,8 +37,8 @@ typedef void (^KFToolbarEventsHandler)(KFToolbarItemSelectionType selectionType,
 @property (nonatomic, strong) NSArray *leftItems;
 @property (nonatomic, strong) NSArray *rightItems;
 
-
-@property (nonatomic,assign) NSUInteger selectedIndex;
+@property (nonatomic, getter = isEnabled) BOOL enabled;
+@property (nonatomic, assign) NSUInteger selectedIndex;
 
 
 - (void)setItemSelectionHandler:(KFToolbarEventsHandler)itemSelectionHandler;
