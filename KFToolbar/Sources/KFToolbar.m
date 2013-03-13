@@ -139,45 +139,48 @@
 - (void)setEnabled:(BOOL)enabled
 {
     _enabled = enabled;
-
-    [[self allItems] enumerateObjectsUsingBlock:^(KFToolbarItem *item, NSUInteger idx, BOOL *stop)
-    {
-        item.enabled = _enabled;
-    }];
+    [self setItemsEnabled:_enabled];
 }
 
 
-//- (void)enableControls:(BOOL)enable
-//{
-//    static NSMutableArray *previouslyDisabledControls;
-//    if (!previouslyDisabledControls || !enable)
-//    {
-//        previouslyDisabledControls = [NSMutableArray new];
-//    }
-//
-//    for (NSView *view in self.subviews)
-//    {
-//        if ([view respondsToSelector:@selector(setEnabled:)])
-//        {
-//            NSControl *control = (NSControl *)view;
-//            if (enable)
-//            {
-//                if (![previouslyDisabledControls containsObject:control])
-//                {
-//                    [control setEnabled:YES];
-//                }
-//            }
-//            else
-//            {
-//                if (!control.isEnabled)
-//                {
-//                    [previouslyDisabledControls addObject:control];
-//                }
-//                [control setEnabled:NO];
-//            }
-//        }
-//    }
-//}
+- (void)setItemsEnabled:(BOOL)enabled
+{
+    static NSMutableArray *previouslyDisabledControls;
+    if (!previouslyDisabledControls || !enabled)
+    {
+        previouslyDisabledControls = [NSMutableArray new];
+    }
+
+    for (NSButton *button in self.subviews)
+    {
+        if ([button respondsToSelector:@selector(setEnabled:)])
+        {
+            if (enabled)
+            {
+                if (![previouslyDisabledControls containsObject:button])
+                {
+                    NSInvocation *inv = [NSInvocation invocationWithMethodSignature:[button methodSignatureForSelector:@selector(setEnabled:)]];
+                    [inv setSelector:@selector(setEnabled:)];
+                    [inv setTarget:button];
+                    [inv setArgument:&enabled atIndex:2];
+                    [inv performSelector:@selector(invoke) withObject:nil];
+                }
+            }
+            else
+            {
+                if (!button.isEnabled)
+                {
+                    [previouslyDisabledControls addObject:button];
+                }
+                NSInvocation *inv = [NSInvocation invocationWithMethodSignature:[button methodSignatureForSelector:@selector(setEnabled:)]];
+                [inv setSelector:@selector(setEnabled:)];
+                [inv setTarget:button];
+                [inv setArgument:&enabled atIndex:2];
+                [inv performSelector:@selector(invoke) withObject:nil];
+            }
+        }
+    }
+}
 
 
 #pragma mark - Adding Items
