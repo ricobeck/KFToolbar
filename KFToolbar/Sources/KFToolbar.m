@@ -51,6 +51,7 @@
 
 - (void)setupDefaults
 {
+    _enabled = YES;
     self.gradientColorTop = kKFToolbarGradientColorTop;
     self.gradientColorBottom = kKFToolbarGradientColorBottom;
     self.borderColorTop = kKFToolbarBorderColorTop;
