@@ -61,6 +61,12 @@
 }
 
 
+- (void)dealloc
+{
+    [self removeObserver:self forKeyPath:@"frame"];
+}
+
+
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
     if ([keyPath isEqualToString:@"frame"] && self.leftItems.count > 0 && self.rightItems.count > 0)
