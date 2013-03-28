@@ -82,6 +82,12 @@ colorSpace: [NSColorSpace genericGrayColorSpace]]
 }
 
 
+- (void)setIsInKeyWindow:(BOOL)isKey
+{
+    self.button.alphaValue = isKey ? 1.0f : 0.66f;
+}
+
+
 - (void)removeFromSuperview
 {
     [self.button removeFromSuperview];

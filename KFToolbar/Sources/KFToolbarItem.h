@@ -34,6 +34,8 @@
 - (instancetype)initWithIcon:(NSImage *)iconImage tag:(NSUInteger)itemTag;
 
 
+- (void)setIsInKeyWindow:(BOOL)isKey;
+
 - (void)removeFromSuperview;
 
 

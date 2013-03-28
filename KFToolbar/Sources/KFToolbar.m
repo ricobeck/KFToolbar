@@ -58,12 +58,35 @@
     self.borderColorBottom = kKFToolbarBorderColorBottom;
     
     [self addObserver:self forKeyPath:@"frame" options:NSKeyValueObservingOptionNew context:NULL];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(windowDidBecomeKey:) name:NSWindowDidBecomeKeyNotification object:self.window];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(windowDidResignKey:) name:NSWindowDidResignKeyNotification object:self.window];
 }
 
 
 - (void)dealloc
 {
     [self removeObserver:self forKeyPath:@"frame"];
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
+
+- (void)windowDidBecomeKey:(NSNotification *)notification
+{
+    [self setNeedsDisplay:YES];
+    [[self allItems] enumerateObjectsUsingBlock:^(KFToolbarItem *item, NSUInteger idx, BOOL *stop)
+    {
+        [item setIsInKeyWindow:YES];
+    }];
+}
+
+
+- (void)windowDidResignKey:(NSNotification *)notification
+{
+    [self setNeedsDisplay:YES];
+    [[self allItems] enumerateObjectsUsingBlock:^(KFToolbarItem *item, NSUInteger idx, BOOL *stop)
+     {
+         [item setIsInKeyWindow:NO];
+     }];
 }
 
 
@@ -71,35 +94,64 @@
 {
     if ([keyPath isEqualToString:@"frame"] && self.leftItems.count > 0 && self.rightItems.count > 0)
     {
-        KFToolbarItem *lastLeftItem = self.leftItems.lastObject;
-        KFToolbarItem *firstRightItem = self.rightItems[0];
-        if (CGRectIntersectsRect(lastLeftItem.button.frame, firstRightItem.button.frame))
-        {
-            if (!self.itemsAreHidden)
-            {
-                [[self allItems] enumerateObjectsUsingBlock:^(KFToolbarItem *item, NSUInteger idx, BOOL *stop)
-                {
-                    [NSAnimationContext beginGrouping];
-                    [[NSAnimationContext currentContext] setCompletionHandler:^{
-                        item.button.hidden = YES;
-                    }];
-                    [[NSAnimationContext currentContext] setDuration:.05f];
-                    [[item.button animator] setAlphaValue:.0f];
-                    [NSAnimationContext endGrouping];
-                }];
-                self.itemsAreHidden = YES;
-                self.hideWidth = NSWidth(self.frame);
-            }
-        }
-        else if (self.itemsAreHidden && self.hideWidth < NSWidth(self.frame))
+        [self updateItemVisibilityAnimated:YES];
+    }
+}
+
+
+- (void)updateItemVisibilityAnimated:(BOOL)animated
+{
+    KFToolbarItem *lastLeftItem = self.leftItems.lastObject;
+    KFToolbarItem *firstRightItem = self.rightItems[0];
+    if (CGRectIntersectsRect(lastLeftItem.button.frame, firstRightItem.button.frame))
+    {
+        if (!self.itemsAreHidden)
         {
             [[self allItems] enumerateObjectsUsingBlock:^(KFToolbarItem *item, NSUInteger idx, BOOL *stop)
              {
-                 item.button.hidden = NO;
-                 [[item.button animator] setAlphaValue:1.0f];
+                 if (animated)
+                 {
+                     [NSAnimationContext beginGrouping];
+                     [[NSAnimationContext currentContext] setCompletionHandler:^{
+                         item.button.hidden = YES;
+                     }];
+                     [[NSAnimationContext currentContext] setDuration:.05f];
+                     [[item.button animator] setAlphaValue:.0f];
+                     [NSAnimationContext endGrouping];
+                 }
+                 else
+                 {
+                     item.button.alphaValue = .0f;
+                     item.button.hidden = YES;
+                 }
+                 
              }];
-            self.itemsAreHidden = NO;
+            self.itemsAreHidden = YES;
+            self.hideWidth = NSWidth(self.frame);
         }
+    }
+    else if (self.itemsAreHidden && self.hideWidth < NSWidth(self.frame))
+    {
+        [[self allItems] enumerateObjectsUsingBlock:^(KFToolbarItem *item, NSUInteger idx, BOOL *stop)
+         {
+             item.button.alphaValue = .0f;
+             item.button.hidden = NO;
+             
+             if (animated)
+             {
+                 [NSAnimationContext beginGrouping];
+                 [[NSAnimationContext currentContext] setDuration:.2f];
+                 [[item.button animator] setAlphaValue:1.0f];
+                 [NSAnimationContext endGrouping];
+             }
+             else
+             {
+                 item.button.alphaValue = 1.0f;
+             }
+             
+         
+         }];
+        self.itemsAreHidden = NO;
     }
 }
 
@@ -123,7 +175,7 @@
 {
     if (self.gradientColorTop && self.gradientColorBottom)
     {
-        [[[NSGradient alloc] initWithStartingColor:self.gradientColorTop endingColor:self.gradientColorBottom] drawInRect:self.bounds angle:-90.0];
+        [[[NSGradient alloc] initWithStartingColor:[self colorFromColorRespectingKeyWindowState:self.gradientColorTop] endingColor:[self colorFromColorRespectingKeyWindowState:self.gradientColorBottom]] drawInRect:self.bounds angle:-90.0];
     }
     
     [NSBezierPath setDefaultLineWidth:0.0f];
@@ -136,10 +188,17 @@
     
     if (self.borderColorBottom)
     {
-        [self.borderColorBottom setStroke];
+        [[self colorFromColorRespectingKeyWindowState:self.borderColorBottom] setStroke];
         
         [NSBezierPath strokeLineFromPoint:NSMakePoint(NSMinX(self.bounds), NSMinY(self.bounds)) toPoint:NSMakePoint(NSMaxX(self.bounds), NSMinY(self.bounds))];
     }
+}
+
+
+- (NSColor *)colorFromColorRespectingKeyWindowState:(NSColor *)inColor
+{
+    float factor = self.window.isKeyWindow ? 1.0f : 1.15f;
+    return [NSColor colorWithCalibratedRed:inColor.redComponent * factor green:inColor.greenComponent * factor blue:inColor.blueComponent * factor alpha:inColor.alphaComponent];
 }
 
 
@@ -217,6 +276,7 @@
         }];
 
         [self layoutSubviews];
+        [self updateItemVisibilityAnimated:NO];
     }
 }
 
@@ -242,6 +302,7 @@
         }];
         
         [self layoutSubviews];
+        [self updateItemVisibilityAnimated:NO];
     }
 }
 
