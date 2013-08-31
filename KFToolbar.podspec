@@ -6,11 +6,11 @@ Pod::Spec.new do |s|
   
   s.homepage         =  "https://pods.kf-interactive.com"
   s.authors          =  { "Rico Becker" => "rico.becker@kf-interactive.com", "Gunnar Herzog" => "gunnar.herzog@kf-interactive.com"}
-  s.source           =  { :git => "https://github.com/ricobeck/KFToolbar.git", s.version.to_s }
+  s.source           =  { :git => "https://github.com/ricobeck/KFToolbar.git", :tag => s.version.to_s }
   
   s.platform         =  :osx, 10.7
   
   s.framework        =  'Foundation'
   s.requires_arc     =  true
-  s.source_files     =  'KFToolbar/Sources/**/*.{h,m}', 'KFToolbar/LICENSE'
+  s.source_files     =  'KFToolbar/Sources/**/*.{h,m}'
 end
