@@ -18,6 +18,11 @@
 
 @implementation AppDelegate
 
+- (BOOL)applicationShouldTerminateAfterLastWindowClosed:(NSApplication *)sender
+{
+	return YES;
+}
+
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
     KFToolbarItem *addItem = [KFToolbarItem toolbarItemWithType:NSToggleButton icon:[NSImage imageNamed:NSImageNameAddTemplate] tag:0];
@@ -25,8 +30,9 @@
     addItem.keyEquivalent = @"q";
     KFToolbarItem *removeItem = [KFToolbarItem toolbarItemWithIcon:[NSImage imageNamed:NSImageNameRemoveTemplate] tag:1];
     removeItem.toolTip = @"Remove";
-    
-    self.toolbar.leftItems = @[addItem, removeItem];
+
+	KFToolbarItem *textItem = [[KFToolbarItem alloc] initWithTitle:@"Text" tag:10];
+    self.toolbar.leftItems = @[addItem, removeItem, textItem];
     self.toolbar.rightItems = @[[KFToolbarItem toolbarItemWithIcon:[NSImage imageNamed:NSImageNameEnterFullScreenTemplate] tag:2], [KFToolbarItem toolbarItemWithIcon:[NSImage imageNamed:NSImageNameExitFullScreenTemplate] tag:3]];
     [self.toolbar setItemSelectionHandler:^(KFToolbarItemSelectionType selectionType, KFToolbarItem *toolbarItem, NSUInteger tag)
     {
@@ -46,7 +52,7 @@
                 dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
                 dispatch_after(popTime, dispatch_get_main_queue(), ^(void)
                 {
-                    [self setControlsEnabled:YES forView:self.toolbar.superview];
+                    [self setControlsEnabled:YES forView:self.toolbar];
                 });
                 break;
             }

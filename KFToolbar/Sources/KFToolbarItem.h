@@ -8,35 +8,16 @@
 
 #import <Cocoa/Cocoa.h>
 
-
-@interface KFToolbarItem : NSButtonCell
-
-
-@property (nonatomic, readonly) NSButton* button;
-
-
-@property (nonatomic, strong) NSImage *icon;
-@property (nonatomic, strong) NSString *toolTip;
-@property (nonatomic, strong) NSString *keyEquivalent;
-@property (nonatomic) NSUInteger keyEquivalentModifierMask;
-@property (nonatomic) NSInteger state;
-@property (nonatomic) NSInteger tag;
-@property (nonatomic, getter = isEnabled) BOOL enabled;
-
+@interface KFToolbarItem : NSButton
 
 + (instancetype)toolbarItemWithType:(NSButtonType)type icon:(NSImage *)iconImage tag:(NSUInteger)itemTag;
-
 + (instancetype)toolbarItemWithIcon:(NSImage *)iconImage tag:(NSUInteger)itemTag;
 
+- (id)initWithButtonType:(NSButtonType)type icon:(NSImage *)iconImage tag:(NSUInteger)itemTag;
+- (id)initWithIcon:(NSImage *)iconImage tag:(NSUInteger)itemTag;
+- (id)initWithTitle:(NSString*)title tag:(NSUInteger)itemTag;
 
-- (instancetype)initWithButtonType:(NSButtonType)type icon:(NSImage *)iconImage tag:(NSUInteger)itemTag;
-
-- (instancetype)initWithIcon:(NSImage *)iconImage tag:(NSUInteger)itemTag;
-
-
-- (void)setIsInKeyWindow:(BOOL)isKey;
-
-- (void)removeFromSuperview;
-
+- (void)hideLeftShadow;
+- (void)hideRightShadow;
 
 @end
