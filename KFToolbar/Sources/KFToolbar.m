@@ -8,14 +8,8 @@
 #import "KFToolbar.h"
 #import "KFToolbarItem.h"
 #import "KFToolBarConstraintBuilder.h"
-
-@interface KFToolbar()
-
-@property (nonatomic, copy) KFToolbarEventsHandler selectionHandler;
-
-@property BOOL itemsIntersecting;
-
-@end
+#import "KFToolBarPrivate.h"
+#import "NSArray+KFIAdditions.h"
 
 @implementation KFToolbar
 {
@@ -26,11 +20,16 @@
 @dynamic leftItems;
 @dynamic rightItems;
 @dynamic items;
+@dynamic allowOverlappingItems;
+
+#pragma mark class methods
 
 + (BOOL)requiresConstraintBasedLayout
 {
 	return YES;
 }
+
+#pragma mark init/cleanup
 
 - (id)initWithFrame:(NSRect)frameRect
 {
@@ -59,23 +58,95 @@
 	[self setTranslatesAutoresizingMaskIntoConstraints:NO];
 }
 
+#pragma mark - NSView overrides
+
+- (void)viewWillMoveToWindow:(NSWindow *)newWindow
+{
+	BOOL inWindow = [self window] != nil;
+	BOOL willBeInWindow = newWindow != nil;
+	
+	if (willBeInWindow && !inWindow) {
+		[newWindow setContentBorderThickness:NSHeight([self bounds])
+									 forEdge:NSMinYEdge];
+	}
+	[super viewWillMoveToWindow:newWindow];
+}
+
+- (void)layout
+{
+	[super layout];
+	[self updateItemVisibility];
+}
+
+- (void)updateConstraints
+{
+	NSString *formatString = self.constraintsBuilder.visualFormatString;
+	if (formatString) {
+		self.horizontalItemConstraints = [NSLayoutConstraint constraintsWithVisualFormat:formatString options:NSLayoutFormatAlignAllCenterY metrics:nil views:self.constraintsBuilder.viewBindings];
+	}
+	[super updateConstraints];
+}
+
+- (void)setHorizontalItemConstraints:(NSArray *)horizontalItemConstraints
+{
+	if (![_horizontalItemConstraints isEqualToArray:horizontalItemConstraints]) {
+		if (_horizontalItemConstraints) {
+			[self removeConstraints:_horizontalItemConstraints];
+		}
+		_horizontalItemConstraints = horizontalItemConstraints;
+		[self addConstraints:horizontalItemConstraints];
+	}
+}
+
+#pragma mark - layout
+
+- (void)fadeOut
+{
+	if (self.visibilityTransitionState == kKFToolbarVisibilityTransitionStateFadeOut) {
+		return;
+	}
+	[NSAnimationContext runAnimationGroup:^(NSAnimationContext *context) {
+		self.visibilityTransitionState = kKFToolbarVisibilityTransitionStateFadeOut;
+		[[self animator] setAlphaValue:0];
+	} completionHandler:^{
+		[self setHidden:YES];
+		self.visibilityTransitionState = kKFToolbarVisibilityTransitionStateNone;
+	}];
+}
+
+- (void)fadeIn
+{
+	if (self.visibilityTransitionState == kKFToolbarVisibilityTransitionStateFadeIn) {
+		return;
+	}
+	[NSAnimationContext runAnimationGroup:^(NSAnimationContext *context) {
+		self.visibilityTransitionState = kKFToolbarVisibilityTransitionStateFadeIn;
+		[[self animator] setAlphaValue:1];
+		[self setHidden:NO];
+	} completionHandler:^{
+		self.visibilityTransitionState = kKFToolbarVisibilityTransitionStateNone;
+	}];
+}
+
 - (void)updateItemVisibility
 {
     KFToolbarItem *lastLeftItem = self.leftItems.lastObject;
     KFToolbarItem *firstRightItem = [_rightItems count] ? self.rightItems[0] : nil;
-    BOOL shouldHide = CGRectIntersectsRect(lastLeftItem.frame, firstRightItem.frame);
-
-	if (shouldHide != self.itemsIntersecting) {
-		[NSAnimationContext beginGrouping];
-		[[NSAnimationContext currentContext] setDuration:.25];
-		[[NSAnimationContext currentContext] setCompletionHandler:^{
-			[self setHidden:shouldHide];
-		}];
-		[[self animator] setAlphaValue:shouldHide ? 0 : 1];
-		[NSAnimationContext endGrouping];
-		self.itemsIntersecting = !self.itemsIntersecting;
+	
+	if (!lastLeftItem && !firstRightItem) {
+		return;
+	}
+    BOOL intersecting = CGRectIntersectsRect(lastLeftItem.frame, firstRightItem.frame);
+	
+	if (intersecting && ![self isHidden]) {
+		[self fadeOut];
+	}
+	else if (!intersecting && [self isHidden]) {
+		[self fadeIn];
 	}
 }
+
+#pragma mark - items
 
 - (NSArray *)items
 {
@@ -90,18 +161,6 @@
 	}];
 }
 
-- (void)viewWillMoveToWindow:(NSWindow *)newWindow
-{
-	BOOL inWindow = [self window] != nil;
-	BOOL willBeInWindow = newWindow != nil;
-	
-	if (willBeInWindow && !inWindow) {
-		[newWindow setContentBorderThickness:NSHeight([self bounds])
-									 forEdge:NSMinYEdge];
-	}
-	[super viewWillMoveToWindow:newWindow];
-}
-
 - (void)prepareItem:(KFToolbarItem *)item
 {
 	[item removeConstraints:[item constraints]];
@@ -109,18 +168,29 @@
 	item.target = self;
 	[item invalidateIntrinsicContentSize];
 	[self addSubview:item];
+	// center horizontally
+	[self addConstraint:[NSLayoutConstraint constraintWithItem:item attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeCenterY multiplier:1 constant:0]];
+	
+}
+
+- (void)prepareItemsForRemoval:(NSArray*)items
+{
+	if (!items) {
+		return;
+	}
+	[items makeObjectsPerformSelector:@selector(removeFromSuperview)];
 }
 
 - (NSArray*)leftItems
 {
-	return [_leftItems copy];
+	return _leftItems ? [_leftItems copy] : @[];
 }
 
 - (void)setLeftItems:(NSArray *)leftItems
 {
     if (![leftItems isEqualToArray:_leftItems])
     {
-        [_leftItems makeObjectsPerformSelector:@selector(removeFromSuperview)];
+        [self prepareItemsForRemoval:_leftItems];
 		[_leftItems removeAllObjects];
 
 		for (KFToolbarItem *item in leftItems) {
@@ -129,23 +199,26 @@
 			}
 			[_leftItems addObject:item];
 			[self prepareItem:item];
-			
 		}
 		[[_leftItems firstObject] performSelector:@selector(hideLeftShadow)];
-       	[self setNeedsUpdateConstraints:YES];
+
+		self.rightItems = [self.rightItems kfi_minusArray:leftItems];
+		self.constraintsBuilder = [[KFToolBarConstraintBuilder alloc] initWithLeftItems:_leftItems rightItems:self.rightItems];
+
+		[self setNeedsUpdateConstraints:YES];
     }
 }
 
 - (NSArray*)rightItems
 {
-	return [_rightItems copy];
+	return _rightItems ? [_rightItems copy] : @[];
 }
 
 - (void)setRightItems:(NSArray *)rightItems
 {
     if (![rightItems isEqualToArray:_rightItems])
     {
-        [_rightItems makeObjectsPerformSelector:@selector(removeFromSuperview)];
+       [self prepareItemsForRemoval:_rightItems];
 		[_rightItems removeAllObjects];
 		
 		for (KFToolbarItem *item in rightItems) {
@@ -157,29 +230,21 @@
 			
 		}
 		[[_rightItems lastObject] performSelector:@selector(hideRightShadow)];
+		self.leftItems = [self.leftItems kfi_minusArray:rightItems];
+		self.constraintsBuilder = [[KFToolBarConstraintBuilder alloc] initWithLeftItems:self.leftItems rightItems:_rightItems];
        	[self setNeedsUpdateConstraints:YES];
-    }}
-
-#pragma mark - Layout
-
-- (void)layout
-{
-	[super layout];
-	[self updateItemVisibility];
+    }
 }
 
-- (void)updateConstraints
+- (BOOL)allowOverlappingItems
 {
-	KFToolBarConstraintBuilder *constraintsBuilder = [[KFToolBarConstraintBuilder alloc] initWithLeftItems:self.leftItems rightItems:self.rightItems];
-	NSString *formatString = constraintsBuilder.visualFormatString;
-	if (formatString) {
-		[self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:formatString options:NSLayoutFormatAlignAllCenterY metrics:nil views:constraintsBuilder.viewBindings]];
-	}
-	// center horizontally
-	[self.items enumerateObjectsUsingBlock:^(KFToolbarItem *item, NSUInteger idx, BOOL *stop) {
-		[self addConstraint:[NSLayoutConstraint constraintWithItem:item attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeCenterY multiplier:1 constant:0]];
-	}];
-	[super updateConstraints];
+	return self.constraintsBuilder ? self.constraintsBuilder.allowOverlappingItems : YES;
+}
+
+- (void)setAllowOverlappingItems:(BOOL)allowOverlappingItems
+{
+	self.constraintsBuilder.allowOverlappingItems = allowOverlappingItems;
+	[self setNeedsUpdateConstraints:YES];
 }
 
 #pragma mark - Selection Handling

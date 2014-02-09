@@ -12,6 +12,8 @@
 
 @property (nonatomic, readonly) NSString *visualFormatString;
 @property (nonatomic, readonly) NSDictionary *viewBindings;
+@property (nonatomic) BOOL allowOverlappingItems;
+@property (nonatomic, readonly) NSLayoutPriority layoutPriority;
 
 - (id)initWithLeftItems:(NSArray*)leftItems rightItems:(NSArray*)rightItems;
 

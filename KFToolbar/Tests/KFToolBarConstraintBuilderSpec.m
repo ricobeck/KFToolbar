@@ -31,8 +31,8 @@ describe(@"KFToolBarConstraintBuilder", ^{
 		it(@"should exist", ^{
 			[[sut shouldNot] beNil];
 		});
-		it(@"should have the correct visual format string", ^{
-			NSString *expectedString = @"|[left0]-[left1]-(>=8@249)-[right0]-[right1]|";
+		it(@"should have the visual format string containing the left-items - layout-priority - right items", ^{
+			NSString *expectedString = @"|[left0]-[left1]-(>=8@500)-[right0]-[right1]|";
 			[[sut.visualFormatString should] equal:expectedString];
 		});
 		it(@"should have the correct view binding keys", ^{
@@ -45,6 +45,25 @@ describe(@"KFToolBarConstraintBuilder", ^{
 		});
 		it(@"should have 4 view binding entries", ^{
 			[[sut.viewBindings should] haveCountOf:4];
+		});
+		it(@"should allow overlapping items per default", ^{
+			[[theValue(sut.allowOverlappingItems) should] beYes];
+		});
+		context(@"when overlapping is YES", ^{
+			beforeEach(^{
+				sut.allowOverlappingItems = YES;
+			});
+			it(@"should have a layout priority of NSLayoutPriorityWindowSizeStayPut (500)", ^{
+				[[theValue(sut.layoutPriority) should] equal:theValue(NSLayoutPriorityWindowSizeStayPut)];
+			});
+		});
+		context(@"when overlapping is NO", ^{
+			beforeEach(^{
+				sut.allowOverlappingItems = NO;
+			});
+			it(@"should have a layout priority greater than NSLayoutPriorityWindowSizeStayPut (500)", ^{
+				[[theValue(sut.layoutPriority) should]  beGreaterThan:theValue(NSLayoutPriorityWindowSizeStayPut)];
+			});
 		});
 		context(@"when having only left items", ^{
 			beforeEach(^{
@@ -84,7 +103,7 @@ describe(@"KFToolBarConstraintBuilder", ^{
 				[[sut.viewBindings should] haveCountOf:2];
 			});
 		});
-		context(@"when habing no items", ^{
+		context(@"when having no items", ^{
 			beforeEach(^{
 				sut = [[KFToolBarConstraintBuilder alloc] initWithLeftItems:nil rightItems:nil];
 			});
