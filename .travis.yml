@@ -1,4 +1,5 @@
 language: objective-c
+env: LC_ALL="en_US.UTF-8"
 rvm: 1.9.3
 script: xcodebuild -workspace KFToolbar.xcworkspace -scheme KFToolbar -sdk macosx10.9 test
  
