@@ -1,3 +1,4 @@
 language: objective-c
 rvm: 1.9.3
-script: xctool test -workspace KFToolbar.xcworkspace -scheme KFToolbar
+script: xcodebuild -workspace KFToolbar.xcworkspace -scheme KFToolbar -sdk macosx10.9 test
+ 
