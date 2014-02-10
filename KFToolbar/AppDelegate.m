@@ -115,4 +115,9 @@
     }
 }
 
+- (IBAction)toggleOverlappingItems:(id)sender
+{
+	self.toolbar.allowOverlappingItems = [sender state] == NSOnState;
+}
+
 @end

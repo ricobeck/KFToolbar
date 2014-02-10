@@ -20,11 +20,14 @@
 
 @implementation KFToolBarConstraintBuilder
 
+@dynamic layoutPriority;
+
 - (id)initWithLeftItems:(NSArray*)leftItems rightItems:(NSArray*)rightItems
 {
 	self = [super init];
     if (self) {
 		_viewBindingsBuilder = [[KFViewBindingsBuilder alloc] init];
+		_allowOverlappingItems = YES;
 		if ([leftItems count]) {
 			_leftBuilder = [[KFItemConstraintBuilder alloc] initWithIdentifier:@"left"];
 			_leftBuilder.items = leftItems;
@@ -45,7 +48,7 @@
 	NSString *rightString = self.rightBuilder.visualFormatString;
 
 	if (leftString && rightString) {
-		return [NSString stringWithFormat:@"|%@-(>=8@249)-%@|", leftString, rightString];
+		return [NSString stringWithFormat:@"|%@-(>=8@%@)-%@|", leftString, @(self.layoutPriority), rightString];
 	}
 	else if (leftString && !rightString) {
 		return [NSString stringWithFormat:@"|%@", leftString];
@@ -59,6 +62,11 @@
 - (NSDictionary*)viewBindings
 {
 	return self.viewBindingsBuilder.itemVariableBindingsDictionary;
+}
+
+- (NSLayoutPriority)layoutPriority
+{
+	return self.allowOverlappingItems ? NSLayoutPriorityWindowSizeStayPut : NSLayoutPriorityWindowSizeStayPut + 1;
 }
 
 @end

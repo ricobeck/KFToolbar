@@ -10,6 +10,8 @@
 #import "KFToolBar.h"
 #import "KFToolbarItem.h"
 #import "KFToolbarItemButtonCell.h"
+#import "KFToolBarPrivate.h"
+#import "KFToolBarConstraintBuilder.h"
 
 SPEC_BEGIN(KFToolBarSpec)
 
@@ -18,7 +20,7 @@ describe(@"KFToolBar", ^{
 
 	context(@"new instance", ^{
 		beforeEach(^{
-			sut = [[KFToolbar alloc] initWithFrame:NSZeroRect];
+			sut = [[KFToolbar alloc] initWithFrame:NSMakeRect(0, 0, 500, 40)];
 		});
 		afterEach(^{
 			sut = nil;
@@ -35,8 +37,20 @@ describe(@"KFToolBar", ^{
 		it(@"should require auto layout", ^{
 			[[theValue([[sut class] requiresConstraintBasedLayout]) should] beYes];
 		});
-		it(@"should not hide items", ^{
-			[[theValue(sut.itemsAreHidden) should] beNo];
+		it(@"should allow overlapping items", ^{
+			[[theValue(sut.allowOverlappingItems) should] beYes];
+		});
+		context(@"when inserting into a window", ^{
+			__block id windowMock = nil;
+
+			beforeEach(^{
+				windowMock = [NSWindow nullMock];
+			});
+			it(@"should set the windows content border to its height", ^{
+				[[windowMock should] receive:@selector(setContentBorderThickness:forEdge:) withArguments:theValue(NSHeight([sut bounds])), theValue(NSMinYEdge)];
+
+				[sut viewWillMoveToWindow:windowMock];
+			});
 		});
 		context(@"tool bar with items", ^{
 			context(@"when setting valid items", ^{
@@ -69,6 +83,43 @@ describe(@"KFToolBar", ^{
 				it(@"should not show the shadow on the last right item", ^{
 					KFToolbarItemButtonCell *cell = [[rightItems lastObject] cell];
 					[[theValue(cell.showRightShadow) should] beNo];
+				});
+				context(@"setting right items to leftItems", ^{
+					beforeEach(^{
+						sut.leftItems = sut.rightItems;
+					});
+					it(@"should not have them in both stacks", ^{
+						[[sut.rightItems shouldNot] containObjectsInArray:sut.leftItems];
+					});
+					it(@"should have 3 items", ^{
+						[[sut.items should] haveCountOf:3];
+					});
+				});
+				context(@"setting left items to rightItems", ^{
+					beforeEach(^{
+						sut.rightItems = sut.leftItems;
+					});
+					it(@"should not have them in both stacks", ^{
+						[[sut.leftItems shouldNot] containObjectsInArray:sut.rightItems];
+					});
+					it(@"should have 3 items", ^{
+						[[sut.items should] haveCountOf:3];
+					});
+				});
+				context(@"when changing allowOverlappingItems", ^{
+					__block KFToolBarConstraintBuilder *constraintBuilderMock = nil;
+					beforeEach(^{
+						constraintBuilderMock = [KFToolBarConstraintBuilder nullMock];
+						sut.constraintsBuilder = constraintBuilderMock;
+					});
+					it(@"should change the underlying constraintBuilders allowOverlappingItems property", ^{
+						[[constraintBuilderMock should] receive:@selector(setAllowOverlappingItems:) withArguments:theValue(NO)];
+						sut.allowOverlappingItems = NO;
+					});
+					it(@"should update the layout constraints", ^{
+						[[sut should] receive:@selector(setNeedsUpdateConstraints:) withArguments:theValue(YES)];
+						sut.allowOverlappingItems = NO;
+					});
 				});
 				context(@"selection", ^{
 					it(@"should select the 3rd item when performing its action", ^{

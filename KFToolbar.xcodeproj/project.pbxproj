@@ -11,6 +11,8 @@
 		281E714E18A662A200302E21 /* KFViewNameBuilder.m in Sources */ = {isa = PBXBuildFile; fileRef = 281E714D18A662A200302E21 /* KFViewNameBuilder.m */; };
 		281E715018A66B2300302E21 /* KFToolBarConstraintBuilderSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = 281E714F18A66B2300302E21 /* KFToolBarConstraintBuilderSpec.m */; };
 		281E715318A66B3E00302E21 /* KFToolBarConstraintBuilder.m in Sources */ = {isa = PBXBuildFile; fileRef = 281E715218A66B3E00302E21 /* KFToolBarConstraintBuilder.m */; };
+		28380BB218A7F33F00680EC7 /* NSArrayKFIAdditionsSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = 28380BB118A7F33F00680EC7 /* NSArrayKFIAdditionsSpec.m */; };
+		28380BB518A7F37800680EC7 /* NSArray+KFIAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 28380BB418A7F37800680EC7 /* NSArray+KFIAdditions.m */; };
 		28BB54D518A63E2300F4B80A /* Podfile in Resources */ = {isa = PBXBuildFile; fileRef = 28BB54D418A63E2300F4B80A /* Podfile */; };
 		28BB54DC18A63E5600F4B80A /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 28BB54DB18A63E5600F4B80A /* XCTest.framework */; };
 		28BB54E218A63E5600F4B80A /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 28BB54E018A63E5600F4B80A /* InfoPlist.strings */; };
@@ -51,6 +53,10 @@
 		281E714F18A66B2300302E21 /* KFToolBarConstraintBuilderSpec.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = KFToolBarConstraintBuilderSpec.m; path = KFToolbar/Tests/KFToolBarConstraintBuilderSpec.m; sourceTree = SOURCE_ROOT; };
 		281E715118A66B3E00302E21 /* KFToolBarConstraintBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KFToolBarConstraintBuilder.h; sourceTree = "<group>"; };
 		281E715218A66B3E00302E21 /* KFToolBarConstraintBuilder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KFToolBarConstraintBuilder.m; sourceTree = "<group>"; };
+		28380BB018A7DFBD00680EC7 /* KFToolBarPrivate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KFToolBarPrivate.h; sourceTree = "<group>"; };
+		28380BB118A7F33F00680EC7 /* NSArrayKFIAdditionsSpec.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NSArrayKFIAdditionsSpec.m; path = KFToolbar/Tests/NSArrayKFIAdditionsSpec.m; sourceTree = SOURCE_ROOT; };
+		28380BB318A7F37800680EC7 /* NSArray+KFIAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSArray+KFIAdditions.h"; sourceTree = "<group>"; };
+		28380BB418A7F37800680EC7 /* NSArray+KFIAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSArray+KFIAdditions.m"; sourceTree = "<group>"; };
 		28BB54D418A63E2300F4B80A /* Podfile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Podfile; sourceTree = SOURCE_ROOT; };
 		28BB54DA18A63E5600F4B80A /* KFToolbarTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = KFToolbarTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		28BB54DB18A63E5600F4B80A /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
@@ -121,6 +127,7 @@
 				28BB54F118A646C700F4B80A /* KFItemConstraintBuilderSpec.m */,
 				281E714A18A6625300302E21 /* KFViewNameBuilderSpec.m */,
 				281E714F18A66B2300302E21 /* KFToolBarConstraintBuilderSpec.m */,
+				28380BB118A7F33F00680EC7 /* NSArrayKFIAdditionsSpec.m */,
 				28BB54DE18A63E5600F4B80A /* Supporting Files */,
 			);
 			path = KFToolbarTests;
@@ -206,6 +213,7 @@
 			isa = PBXGroup;
 			children = (
 				72B843DF16E4FB2200507CDE /* KFToolbar.h */,
+				28380BB018A7DFBD00680EC7 /* KFToolBarPrivate.h */,
 				72B843E016E4FB2200507CDE /* KFToolbar.m */,
 				72B843E116E4FB2200507CDE /* KFToolbarItem.h */,
 				72B843E216E4FB2200507CDE /* KFToolbarItem.m */,
@@ -219,6 +227,8 @@
 				281E714D18A662A200302E21 /* KFViewNameBuilder.m */,
 				281E715118A66B3E00302E21 /* KFToolBarConstraintBuilder.h */,
 				281E715218A66B3E00302E21 /* KFToolBarConstraintBuilder.m */,
+				28380BB318A7F37800680EC7 /* NSArray+KFIAdditions.h */,
+				28380BB418A7F37800680EC7 /* NSArray+KFIAdditions.m */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
@@ -355,6 +365,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				28380BB218A7F33F00680EC7 /* NSArrayKFIAdditionsSpec.m in Sources */,
 				28BB54F818A659E600F4B80A /* KFViewBindingsBuilderSpec.m in Sources */,
 				281E714B18A6625300302E21 /* KFViewNameBuilderSpec.m in Sources */,
 				28BB54EE18A643CD00F4B80A /* KFToolBarSpec.m in Sources */,
@@ -378,6 +389,7 @@
 				28BB54FB18A65A2400F4B80A /* KFViewBindingsBuilder.m in Sources */,
 				281E714E18A662A200302E21 /* KFViewNameBuilder.m in Sources */,
 				281E715318A66B3E00302E21 /* KFToolBarConstraintBuilder.m in Sources */,
+				28380BB518A7F37800680EC7 /* NSArray+KFIAdditions.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
