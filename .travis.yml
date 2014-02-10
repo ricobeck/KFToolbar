@@ -1,2 +1,2 @@
 language: objective-c
-
+script: xctool test -workspace KFToolbar.xcworkspace -scheme KFToolbar
