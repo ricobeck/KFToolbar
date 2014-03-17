@@ -1,8 +1,16 @@
 #A Toolbar for NSWindows
+![Travis Status](https://travis-ci.org/ricobeck/KFToolbar.png?branch=master)
 
 An easy to setup and use toolbar that can contain KFToolbarItems (what is actually a wrapper for NSButtons).
 
 ![<Display Name>](<http://dl.dropbox.com/u/18869578/Screenshots/11lh8w2d~22s.png>)
+
+## Installation
+
+KFAboutWindow is available through [CocoaPods](http://cocoapods.org), to install
+it simply add the following line to your Podfile:
+
+    pod "KFToolbar"
 
 ##Usage
 Actions are handled inside a block.
@@ -59,5 +67,19 @@ An exhaustive example is included.
         }
     }];
     
-##Licence
-This code is licenced under MIT.
+## Author
+
+Rico Becker, [@ricobeck][1]
+
+## Contributors
+
+Gunnar Herzog, [@trispo][2]  
+Markus Müller, [@m_mlr][3]
+
+## License
+
+KFToolbar is available under the MIT license. See the LICENSE file for more info.
+
+[1]: http://twitter.com/ricobeck        "@ricobeck"
+[2]: http://twitter.com/trispo          "@trispo"
+[3]: http://twitter.com/m_mlr          "@m_mlr"
